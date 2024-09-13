@@ -59,7 +59,7 @@ jobs:
         run: cargo test --all --no-default-features
 
       - name: Build
-        run: cargo build --all --release
+        run: cargo build --all --release --no-default-features
 
       - name: C Examples
         if: runner.os != 'Windows'
