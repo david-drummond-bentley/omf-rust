@@ -56,7 +56,7 @@ jobs:
           toolchain: ${{ matrix.rust }}
 
       - name: Test
-        run: cargo test --all
+        run: cargo test --all --no-default-features
 
       - name: Build
         run: cargo build --all --release
