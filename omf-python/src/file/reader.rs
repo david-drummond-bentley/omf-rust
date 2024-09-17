@@ -1,9 +1,35 @@
 use crate::PyProject;
+use omf::file::Limits;
 use omf::file::Reader;
-use std::fs::File;
-
 use pyo3::exceptions::PyIOError;
 use pyo3::prelude::*;
+use std::fs::File;
+
+#[pyclass(name = "Limits")]
+pub struct PyLimits {
+    #[pyo3(get, set)]
+    pub json_bytes: Option<u64>,
+    #[pyo3(get, set)]
+    pub image_bytes: Option<u64>,
+    #[pyo3(get, set)]
+    pub image_dim: Option<u32>,
+    #[pyo3(get, set)]
+    pub validation: Option<u32>,
+}
+
+#[pymethods]
+impl PyLimits {
+    #[new]
+    pub fn new() -> PyResult<Self> {
+        let limits = Limits::default();
+        Ok(PyLimits {
+            json_bytes: limits.json_bytes,
+            image_bytes: limits.image_bytes,
+            image_dim: limits.image_dim,
+            validation: limits.validation,
+        })
+    }
+}
 
 #[pyclass(name = "Reader")]
 pub struct PyReader {
@@ -14,10 +40,8 @@ pub struct PyReader {
 impl PyReader {
     #[new]
     pub fn new(filepath: &str) -> PyResult<Self> {
-        let file = File::open(filepath)
-            .map_err(|e| PyErr::new::<PyIOError, _>(e.to_string()))?;
-        let inner = Reader::new(file)
-            .map_err(|e| PyErr::new::<PyIOError, _>(e.to_string()))?;
+        let file = File::open(filepath).map_err(|e| PyErr::new::<PyIOError, _>(e.to_string()))?;
+        let inner = Reader::new(file).map_err(|e| PyErr::new::<PyIOError, _>(e.to_string()))?;
         Ok(PyReader { inner })
     }
 
